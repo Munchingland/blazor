@@ -4,7 +4,6 @@
 
 <EditForm Model="matchUpdate" OnValidSubmit="@(e=> SendUpdate())">
     <DataAnnotationsValidator/>
-    <ValidationSummary/>
     <div class="form-group">
         <label>de update</label>
         <InputText id="update" class="form-control" @bind-Value="matchUpdate.UpdateMessage"/>
