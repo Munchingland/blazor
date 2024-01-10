@@ -2,14 +2,22 @@
 @using Pin.LiveSports.Blazor.Components
 
 @inject NavigationManager _navigationManager
-<MudPaper Width="100%">
-    <MudList>
-        @foreach(var history in matchHistory)
+
+
+
+@if (matchHistory.Count == 0)
+ {
+    <div>de match zal binnenkort beginnen</div>
+ }
+@if(matchHistory.Count!=0)
+ {
+        @foreach (var history in matchHistory)
          {
-                        <MatchHistoryItem HistoryItem="history"/>
+             <MatchHistoryItem HistoryItem="history" />
          }
-    </MudList>
-</MudPaper>
+ }
+
+
 
 @code{
 
