@@ -1,0 +1,40 @@
+﻿@page "/reporter"
+
+@inject NavigationManager _navigationManager
+
+<MudCard>
+    <MudForm Model="matchUpdate">
+        <MudCardContent>
+            <MudTextField Label="Update :"
+                          @bind-Value="matchUpdate.UpdateMessage" />
+
+        </MudCardContent>
+    </MudForm>
+    <MudCardActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(async()=> await SendUpdate())">Send Update</MudButton>
+    </MudCardActions>
+</MudCard>
+
+@code{
+
+    private HubConnection hubConnection;
+    private MatchUpdate matchUpdate = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+                        .WithUrl(_navigationManager.ToAbsoluteUri(Constants.MatchHubUrl))
+                        .Build();
+
+        await hubConnection.StartAsync();
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task SendUpdate()
+    {
+        matchUpdate.Time = DateTime.Now;
+        await hubConnection.SendAsync("SendUpdate", matchUpdate);
+        matchUpdate.UpdateMessage = string.Empty;
+    }
+}
