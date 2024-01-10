@@ -2,6 +2,12 @@
 
 @inject NavigationManager _navigationManager
 
+@if(previousUpdate.UpdateMessage != null)
+ {
+     <div>Vorige update : @previousUpdate.UpdateMessage</div>
+ }
+
+
 <EditForm Model="matchUpdate" OnValidSubmit="@(e=> SendUpdate())">
     <DataAnnotationsValidator/>
     <div class="form-group">
@@ -16,6 +22,7 @@
 
     private HubConnection hubConnection;
     private MatchUpdate matchUpdate = new();
+    private MatchUpdate previousUpdate = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -32,6 +39,7 @@
     {
         matchUpdate.Time = DateTime.Now;
         await hubConnection.SendAsync("SendUpdate", matchUpdate);
+        previousUpdate = matchUpdate;
         matchUpdate.UpdateMessage = string.Empty;
     }
 }
