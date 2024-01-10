@@ -2,7 +2,7 @@
 @using Pin.LiveSports.Blazor.Components
 
 @inject NavigationManager _navigationManager
-
+@inject IMatchService _matchService
 
 
 @if (matchHistory.Count == 0)
@@ -33,7 +33,7 @@
 
         hubConnection.On<MatchUpdate>("matchUpdate", (update) =>
         {
-            matchHistory.Add(update);
+            matchHistory = _matchService.GetMatchHistory();
             StateHasChanged();
         });
 
