@@ -4,13 +4,13 @@
     {
         public string UpdateMessage { get; set; }
 
-        public TimeOnly Time { get; set; }
+        public DateTime Time { get; set; }
 
-        public string Update 
+        public string FullUpdate 
         { 
             get
             {
-                return $"{Time}: {UpdateMessage}";
+                return $"{TimeOnly.FromDateTime(Time)}: {UpdateMessage}";
             }
         }
     }
