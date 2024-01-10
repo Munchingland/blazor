@@ -31,7 +31,8 @@ namespace Pin.LiveSports.Blazor
 
             app.UseRouting();
 
-            app.MapHub<MatchHub>("/matchHub");
+            app.MapBlazorHub();
+            app.MapHub<MatchHub>(Constants.MatchHubUrl);
             app.MapFallbackToPage("/_Host");
 
             app.Run();
