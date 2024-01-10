@@ -1,2 +1,35 @@
 ﻿@page "/"
+@using Pin.LiveSports.Blazor.Components
 
+@inject NavigationManager _navigationManager
+<MudPaper Width="100%">
+    <MudList>
+        @foreach(var history in matchHistory)
+         {
+                        <MatchHistoryItem HistoryItem="history"/>
+         }
+    </MudList>
+</MudPaper>
+
+@code{
+
+    private HubConnection hubConnection;
+    private List<MatchUpdate> matchHistory = new List<MatchUpdate>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+                        .WithUrl(_navigationManager.ToAbsoluteUri(Constants.MatchHubUrl))
+                        .Build();
+
+        hubConnection.On<MatchUpdate>("matchUpdate", (update) =>
+        {
+            matchHistory.Add(update);
+            StateHasChanged();
+        });
+
+        await hubConnection.StartAsync();
+
+        await base.OnInitializedAsync();
+    }
+}
