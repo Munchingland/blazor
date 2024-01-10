@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Pin.LiveSports.Blazor.Hubs;
+using Pin.LiveSports.Core.Services;
+using Pin.LiveSports.Core.Services.Interfaces;
 
 namespace Pin.LiveSports.Blazor
 {
@@ -14,6 +16,7 @@ namespace Pin.LiveSports.Blazor
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor();
             builder.Services.AddSignalR();
+            builder.Services.AddSingleton<IMatchService, MatchService>();
 
             var app = builder.Build();
 

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using Pin.LiveSports.Blazor.Models;
+using Pin.LiveSports.Core.Models;
 
 namespace Pin.LiveSports.Blazor.Hubs
 {
@@ -7,6 +7,7 @@ namespace Pin.LiveSports.Blazor.Hubs
     {
         public async Task SendUpdate(MatchUpdate update)
         {
+
             await Clients.All.SendAsync("matchUpdate", update);
         }
     }
