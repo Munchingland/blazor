@@ -1,0 +1,42 @@
+﻿@foreach (var tournament in Tournaments)
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Tornooi :</th>
+                <th>Aantal deelnemers:</th>
+                <th>Begonnen ?</th>
+                <th>afgerond ?</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@tournament.Name</td>
+                <td>@tournament.Competitors.Count</td>
+                <td>@(tournament.HasStarted ? "ja" : "nee")</td>
+                <td>@(tournament.HasCompleted ? "ja" : "nee")</td>
+                @if (!isReporter)
+                {
+                    <td><button>Zie toernooi</button></td>
+                    <td></td>
+                }
+                @if (isReporter)
+                {
+                    <td><button>Update toernooi</button></td>
+                    <td><button>Reporteer toernooi</button></td>
+                }
+            </tr>
+        </tbody>
+    </table>
+}
+
+
+@code {
+    [Parameter]
+    public List<Tournament> Tournaments { get; set; }
+
+    [Parameter]
+    public bool isReporter { get; set; }
+}
