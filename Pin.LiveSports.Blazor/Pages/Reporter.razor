@@ -1,28 +1,40 @@
 ﻿@page "/reporter"
 
-@inject NavigationManager _navigationManager
-
-@if(previousUpdate.UpdateMessage != null)
- {
-     <div>Vorige update : @previousUpdate.UpdateMessage</div>
- }
+@inject NavigationManager _navigationManager;
+@inject IWindSurferService _surferService;
+@using Pin.LiveSports.Blazor.Components;  
 
 
-<EditForm Model="matchUpdate" OnValidSubmit="@(e=> SendUpdate())">
-    <DataAnnotationsValidator/>
-    <div class="form-group">
-        <label>de update</label>
-        <InputText id="update" class="form-control" @bind-Value="matchUpdate.UpdateMessage"/>
-        <ValidationMessage For="@(()=>matchUpdate.UpdateMessage)"/>
-    </div>
-    <button type="submit" class="btn btn-primary">Opslaan</button>
-</EditForm>
+@if (previousUpdate.UpdateMessage != null)
+{
+    <div>Vorige update : @previousUpdate.UpdateMessage</div>
+}
+
+
+@if(!isNewSurferRequested)
+{
+
+}
+@if (isNewSurferRequested)
+            {
+                <WindSurferForm WindSurfer="@newSurfer" OnCancel="RefreshSurfers" OnSave="SaveSurfer"/>
+            }
+
+
+
 
 @code{
-
     private HubConnection hubConnection;
     private MatchUpdate matchUpdate = new();
     private MatchUpdate previousUpdate = new();
+
+    private bool isNewSurferRequested = false;
+
+    private WindSurfer newSurfer = new();
+    private Tournament newTournament = new();
+
+    private List<WindSurfer> participatingSurfers = new();
+    private List<WindSurfer> notParticipatingSurfers = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -31,7 +43,7 @@
                         .Build();
 
         await hubConnection.StartAsync();
-
+        notParticipatingSurfers = _surferService.GetAll();
         await base.OnInitializedAsync();
     }
 
@@ -41,5 +53,15 @@
         await hubConnection.SendAsync("SendUpdate", matchUpdate);
         previousUpdate = matchUpdate;
         matchUpdate.UpdateMessage = string.Empty;
+    }
+
+    private void RefreshSurfers()
+    {
+
+    }
+
+    private void SaveSurfer()
+    {
+        _surferService.AddSurfer(newSurfer);
     }
 }
