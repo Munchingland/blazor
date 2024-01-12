@@ -2,6 +2,7 @@
 
 @inject NavigationManager _navigationManager;
 @inject IWindSurferService _surferService;
+@inject ITournamentService _tournamentService;
 @using Pin.LiveSports.Blazor.Components;
 
 
@@ -11,25 +12,51 @@
 }
 @if(!isAddingNewTournament && !isReporting)
 {
+    <button class="btn btn-outline-primary" @onclick="()=>RequestTournamentChanged()">Voeg een nieuwe toernooi toe</button>
+    @if(tournaments != null)
+    {
+        <TournamentList isReporter=true Tournaments="tournaments" />
+    }
     
 }
 
-@if (!isAddingNewTournament)
+@if(isAddingNewTournament)
 {
     @if (!isNewSurferRequested)
     {
-        <button class="btn btn-outline-primary" @onclick="()=>RequestnewSurferForm()">Voeg nieuwe windsurfer toe</button>
-        <WindSurferList WindSurfers="notParticipatingSurfers" ButtonText="deelt mee" TableTitle="windsurfers die niet deelnemen" UpdateSurfer="UpdateParticipant"/>
+            <button class="btn btn-outline-primary" @onclick="()=>RequestNewSurferForm()">Voeg nieuwe windsurfer toe</button>
+            <button class="btn btn-outline-secondary" @onclick="()=>RequestTournamentChanged()">annuleer nieuw toernooi</button>
+            <EditForm Model="newTournament" OnValidSubmit="AddNewTournament">
+            <DataAnnotationsValidator />
+                <div class="form-group">
+                    <label for="name">Naam :</label>
+                    <InputText id="name" class="form-control" @bind-Value="newTournament.Name"/>
+                    <ValidationMessage For="@(()=>newTournament.Name)"/>
+                </div>
 
-        <WindSurferList WindSurfers="participatingSurfers" ButtonText="deelt niet mee" TableTitle="windsurfers die deelnemen" UpdateSurfer="UpdateParticipant"/>
+                @if(participatingSurfers.Count >= 2)
+                {
+                    <button class="btn btn-outline-primary">Sla toernooi op</button>
+                }
+            </EditForm>
+            @if(participatingSurfers.Count> 0)
+            {
+                <WindSurferList WindSurfers="participatingSurfers" ButtonText="deelt niet mee" TableTitle="windsurfers die deelnemen" UpdateSurfer="UpdateParticipant" />
+            }
+           
+            <WindSurferList WindSurfers="notParticipatingSurfers" ButtonText="deelt mee" TableTitle="windsurfers die niet deelnemen" UpdateSurfer="UpdateParticipant" />
+            
+            
+        
+    }
+    @if (isNewSurferRequested)
+    {
+        <WindSurferForm WindSurfer="@newSurfer" OnCancel="RefreshSurfers" OnSave="SaveSurfer" />
     }
 }
 
 
-@if (isNewSurferRequested)
-{
-    <WindSurferForm WindSurfer="@newSurfer" OnCancel="RefreshSurfers" OnSave="SaveSurfer" />
-}
+
 
 
 
@@ -43,9 +70,11 @@
 
     private WindSurfer newSurfer = new();
     private Tournament newTournament = new();
+    private Tournament updateTournament = new();
 
     private List<WindSurfer> participatingSurfers = new();
     private List<WindSurfer> notParticipatingSurfers = new();
+    private List<Tournament> tournaments;
 
     private bool isAddingNewTournament;
     private bool isReporting;
@@ -58,7 +87,18 @@
 
         await hubConnection.StartAsync();
         notParticipatingSurfers = _surferService.GetAll();
+        tournaments = _tournamentService.GetAll();
         await base.OnInitializedAsync();
+    }
+    private void RequestTournamentChanged()
+    {
+        isAddingNewTournament = !isAddingNewTournament;
+        newTournament.Name = "";
+        if (isAddingNewTournament)
+        {
+            participatingSurfers = new();
+            RefreshSurfers();
+        }
     }
 
     private async Task SendUpdate()
@@ -97,9 +137,16 @@
         StateHasChanged();
     }
 
-    private void RequestnewSurferForm()
+    private void RequestNewSurferForm()
     {
         isNewSurferRequested = true;
         newSurfer = new();
+    }
+    private async Task AddNewTournament()
+    {
+        _tournamentService.CreateTournament(participatingSurfers, newTournament.Name);
+        await hubConnection.SendAsync("NewTournament");
+        isAddingNewTournament = false;
+        tournaments = _tournamentService.GetAll();
     }
 }
