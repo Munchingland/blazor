@@ -38,6 +38,7 @@ namespace Pin.LiveSports.Core.Services
                 Name = name,
                 Id = id
             };
+            _tournaments.Add(toAdd);
         }
 
         public List<Tournament> GetAll()
