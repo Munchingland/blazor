@@ -6,7 +6,7 @@
 @inject ITournamentService tournamentService
 
 
-<TournamentList isReporter=false Tournaments="tournaments"/>
+<TournamentList isReporter=false Tournaments="tournaments" OpenTournament="GetTournamentInfo"/>
 
 
 
@@ -37,5 +37,9 @@
         await hubConnection.StartAsync();
 
         await base.OnInitializedAsync();
+    }
+    private void GetTournamentInfo(Tournament tournament)
+    {
+        _navigationManager.NavigateTo("/tournament/" + tournament.Id);
     }
 }
