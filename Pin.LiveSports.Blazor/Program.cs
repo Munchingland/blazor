@@ -17,6 +17,8 @@ namespace Pin.LiveSports.Blazor
             builder.Services.AddServerSideBlazor();
             builder.Services.AddSignalR();
             builder.Services.AddSingleton<IMatchService, MatchService>();
+            builder.Services.AddSingleton<ITournamentService, TournamentService>();
+            builder.Services.AddSingleton<IWindSurferService, WindSurferService>();
 
             var app = builder.Build();
 
