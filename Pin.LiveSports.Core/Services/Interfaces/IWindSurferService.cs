@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Pin.LiveSports.Core.Services.Interfaces
 {
-    public interface ICompetitorService
+    public interface IWindSurferService
     {
-        void AddCompetitor(Competitor competitor);
-        List<Competitor> GetAll();
+        void AddSurfer(WindSurfer windSurfer);
+        List<WindSurfer> GetAll();
     }
 }
