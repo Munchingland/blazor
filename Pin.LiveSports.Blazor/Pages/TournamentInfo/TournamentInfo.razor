@@ -1,7 +1,24 @@
 ﻿@page "/tournament/{Id:int}"
 @inject ITournamentService _tournamentService
 
+<table class="table table-striped">
+    <thead>
+        <tr>
 
+            <th>deelnemers</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var surfer in ChosenTournament.Competitors)
+        {
+            <tr>
+                <td>@surfer.Surfer.Name</td>
+                <td>@surfer.PointsGained</td>
+            </tr>
+        }
+    </tbody>
+</table>
 
 @code {
     [Parameter]
