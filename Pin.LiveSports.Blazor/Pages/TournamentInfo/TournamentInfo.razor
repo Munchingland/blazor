@@ -1,0 +1,18 @@
+﻿@page "/tournament/{Id:int}"
+@inject ITournamentService _tournamentService
+
+
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    public Tournament ChosenTournament { get; set; }
+
+
+    protected override void OnInitialized()
+    {
+        ChosenTournament = _tournamentService.GetById(Id);
+        base.OnInitialized();
+    }
+}
