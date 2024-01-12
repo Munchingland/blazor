@@ -10,7 +10,7 @@ namespace Pin.LiveSports.Core.Services.Interfaces
     public interface ITournamentService
     {
 
-        void CreateTournament(List<Competitor> competitors, string name);
+        void CreateTournament(List<WindSurfer> competitors, string name);
 
         List<Tournament> GetAll();
     }

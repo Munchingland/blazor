@@ -17,13 +17,19 @@ namespace Pin.LiveSports.Core.Services
         }
 
 
-        public void CreateTournament(List<Competitor> competitors, string name)
+        public void CreateTournament(List<WindSurfer> windSurfers, string name)
         {
             int id = _tournaments.Select(a => a.Id).DefaultIfEmpty(0).Max();
-            foreach (var competitor in competitors)
+            List<Competitor> competitors = new List<Competitor>();
+            foreach (var surfer in windSurfers)
             {
-
+                var comp = new Competitor
+                {
+                    Surfer = surfer,
+                };
+                competitors.Add(comp);
             }
+
             Tournament toAdd = new Tournament
             {
                 Competitors = competitors,
