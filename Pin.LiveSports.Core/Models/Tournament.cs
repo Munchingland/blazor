@@ -12,6 +12,8 @@ namespace Pin.LiveSports.Core.Models
         public List<Competitor> Competitors { get; set; }
         public List<MatchUpdate>? MatchHistory { get; set; } = new List<MatchUpdate>();
         public string Name { get; set; }
+        public bool HasStarted { get; set; }
+        public bool HasCompleted { get; set; }
 
     }
 }
