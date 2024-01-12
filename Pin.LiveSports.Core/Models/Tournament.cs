@@ -8,9 +8,10 @@ namespace Pin.LiveSports.Core.Models
 {
     public class Tournament
     {
+        public int Id { get; set; }
         public List<Competitor> Competitors { get; set; }
         public List<MatchUpdate> MatchHistory { get; set; }
-        public string NameCompetition { get; set; }
+        public string Name { get; set; }
 
     }
 }
