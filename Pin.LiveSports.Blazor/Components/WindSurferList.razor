@@ -1,0 +1,31 @@
+﻿<table class="table table-striped">
+    <thead>
+        <tr>
+
+            <th>@TableTitle</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var surfer in WindSurfers)
+        {
+            <tr>
+                <td>@surfer.Name</td>
+                <td><button class="btn btn-outline-primary" @onclick="()=>UpdateSurfer.InvokeAsync(surfer)">@ButtonText</button></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    [Parameter]
+    public string ButtonText { get; set; }
+    [Parameter]
+    public List<WindSurfer> WindSurfers { get; set; }
+
+    [Parameter]
+    public EventCallback<WindSurfer> UpdateSurfer{ get; set; }
+
+    [Parameter]
+    public string TableTitle { get; set; }
+}
