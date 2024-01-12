@@ -10,17 +10,17 @@
 {
     <div>Vorige update : @previousUpdate.UpdateMessage</div>
 }
-@if(!isAddingNewTournament && !isReporting)
+@if (!isEditingTournaments && !isReporting)
 {
     <button class="btn btn-outline-primary" @onclick="()=>RequestTournamentChanged()">Voeg een nieuwe toernooi toe</button>
     @if(tournaments != null)
     {
-        <TournamentList isReporter=true Tournaments="tournaments" />
+        <TournamentList isReporter=true Tournaments="tournaments" OpenTournament="EditTournament" />
     }
     
 }
 
-@if(isAddingNewTournament)
+@if (isEditingTournaments)
 {
     @if (!isNewSurferRequested)
     {
@@ -43,23 +43,13 @@
             {
                 <WindSurferList WindSurfers="participatingSurfers" ButtonText="deelt niet mee" TableTitle="windsurfers die deelnemen" UpdateSurfer="UpdateParticipant" />
             }
-           
             <WindSurferList WindSurfers="notParticipatingSurfers" ButtonText="deelt mee" TableTitle="windsurfers die niet deelnemen" UpdateSurfer="UpdateParticipant" />
-            
-            
-        
     }
     @if (isNewSurferRequested)
     {
         <WindSurferForm WindSurfer="@newSurfer" OnCancel="RefreshSurfers" OnSave="SaveSurfer" />
     }
 }
-
-
-
-
-
-
 
 @code{
     private HubConnection hubConnection;
@@ -76,7 +66,7 @@
     private List<WindSurfer> notParticipatingSurfers = new();
     private List<Tournament> tournaments;
 
-    private bool isAddingNewTournament;
+    private bool isEditingTournaments;
     private bool isReporting;
 
     protected override async Task OnInitializedAsync()
@@ -92,9 +82,9 @@
     }
     private void RequestTournamentChanged()
     {
-        isAddingNewTournament = !isAddingNewTournament;
-        newTournament.Name = "";
-        if (isAddingNewTournament)
+        isEditingTournaments = !isEditingTournaments;
+        newTournament = new();
+        if (isEditingTournaments)
         {
             participatingSurfers = new();
             RefreshSurfers();
@@ -144,9 +134,23 @@
     }
     private async Task AddNewTournament()
     {
-        _tournamentService.CreateTournament(participatingSurfers, newTournament.Name);
+        if(newTournament.Id == 0)
+        {
+            _tournamentService.CreateTournament(participatingSurfers, newTournament.Name);
+        }
+        else
+        {
+            _tournamentService.UpdateTournament(newTournament, participatingSurfers, notParticipatingSurfers);
+        }
         await hubConnection.SendAsync("NewTournament");
-        isAddingNewTournament = false;
+        isEditingTournaments = false;
         tournaments = _tournamentService.GetAll();
+    }
+
+    private void EditTournament(Tournament tournament)
+    {
+        newTournament = tournament;
+        isEditingTournaments = true;
+        participatingSurfers = newTournament.Competitors.Select(d => d.Surfer).ToList();
     }
 }
