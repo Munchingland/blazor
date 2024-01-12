@@ -1,6 +1,6 @@
-﻿@foreach (var tournament in Tournaments)
-{
-    <table class="table table-striped">
+﻿
+<table class="table table-striped">
+   
         <thead>
             <tr>
                 <th>Tornooi :</th>
@@ -11,7 +11,9 @@
                 <th></th>
             </tr>
         </thead>
-        <tbody>
+    <tbody>
+        @foreach (var tournament in Tournaments)
+        {
             <tr>
                 <td>@tournament.Name</td>
                 <td>@tournament.Competitors.Count</td>
@@ -19,18 +21,20 @@
                 <td>@(tournament.HasCompleted ? "ja" : "nee")</td>
                 @if (!isReporter)
                 {
-                    <td><button>Zie toernooi</button></td>
+                    <td><button class="btn btn-primary" @onclick="(e=> OpenTournament.InvokeAsync(tournament))">Zie toernooi</button></td>
                     <td></td>
                 }
                 @if (isReporter)
                 {
-                    <td><button>Update toernooi</button></td>
-                    <td><button>Reporteer toernooi</button></td>
+                    <td><button class="btn btn-warning" @onclick="(e=> OpenTournament.InvokeAsync(tournament))">Update toernooi</button></td>
+                    <td><button class="btn btn-primary">Reporteer toernooi</button></td>
                 }
             </tr>
-        </tbody>
-    </table>
-}
+        }
+    </tbody>
+     
+</table>
+
 
 
 @code {
@@ -39,4 +43,10 @@
 
     [Parameter]
     public bool isReporter { get; set; }
+
+    [Parameter]
+    public EventCallback<Tournament> OpenTournament { get; set; } 
+
+    [Parameter]
+    public EventCallback<Tournament> StartReport { get; set; }
 }
