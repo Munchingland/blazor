@@ -17,5 +17,9 @@ namespace Pin.LiveSports.Blazor.Hubs
             _matchService.AddUpdateToHistory(update);
             await Clients.All.SendAsync("matchUpdate",update);
         }
+        public async Task NewTournament()
+        {
+            await Clients.All.SendAsync("newTournament");
+        }
     }
 }
