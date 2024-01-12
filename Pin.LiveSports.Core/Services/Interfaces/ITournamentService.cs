@@ -13,5 +13,7 @@ namespace Pin.LiveSports.Core.Services.Interfaces
         void CreateTournament(List<WindSurfer> competitors, string name);
 
         List<Tournament> GetAll();
+
+        Tournament GetById(int id);
     }
 }

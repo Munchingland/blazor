@@ -19,12 +19,14 @@ namespace Pin.LiveSports.Core.Services
 
         public void CreateTournament(List<WindSurfer> windSurfers, string name)
         {
-            int id = _tournaments.Select(a => a.Id).DefaultIfEmpty(0).Max();
+            int id = _tournaments.Select(a => a.Id).DefaultIfEmpty(1).Max();
             List<Competitor> competitors = new List<Competitor>();
+            var i = 0;
             foreach (var surfer in windSurfers)
             {
                 var comp = new Competitor
                 {
+                    Id = competitors.Select(c => c.Id).DefaultIfEmpty(1).Max(),
                     Surfer = surfer,
                 };
                 competitors.Add(comp);
@@ -41,6 +43,11 @@ namespace Pin.LiveSports.Core.Services
         public List<Tournament> GetAll()
         {
             return _tournaments;
+        }
+
+        public Tournament GetById(int id)
+        {
+            return _tournaments.FirstOrDefault(t => t.Id == id);
         }
     }
 }
