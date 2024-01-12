@@ -2,23 +2,34 @@
 
 @inject NavigationManager _navigationManager;
 @inject IWindSurferService _surferService;
-@using Pin.LiveSports.Blazor.Components;  
+@using Pin.LiveSports.Blazor.Components;
 
 
 @if (previousUpdate.UpdateMessage != null)
 {
     <div>Vorige update : @previousUpdate.UpdateMessage</div>
 }
-
-
-@if(!isNewSurferRequested)
+@if(!isAddingNewTournament && !isReporting)
 {
-
+    
 }
+
+@if (!isAddingNewTournament)
+{
+    @if (!isNewSurferRequested)
+    {
+        <button class="btn btn-outline-primary" @onclick="()=>RequestnewSurferForm()">Voeg nieuwe windsurfer toe</button>
+        <WindSurferList WindSurfers="notParticipatingSurfers" ButtonText="deelt mee" TableTitle="windsurfers die niet deelnemen" UpdateSurfer="UpdateParticipant"/>
+
+        <WindSurferList WindSurfers="participatingSurfers" ButtonText="deelt niet mee" TableTitle="windsurfers die deelnemen" UpdateSurfer="UpdateParticipant"/>
+    }
+}
+
+
 @if (isNewSurferRequested)
-            {
-                <WindSurferForm WindSurfer="@newSurfer" OnCancel="RefreshSurfers" OnSave="SaveSurfer"/>
-            }
+{
+    <WindSurferForm WindSurfer="@newSurfer" OnCancel="RefreshSurfers" OnSave="SaveSurfer" />
+}
 
 
 
@@ -35,6 +46,9 @@
 
     private List<WindSurfer> participatingSurfers = new();
     private List<WindSurfer> notParticipatingSurfers = new();
+
+    private bool isAddingNewTournament;
+    private bool isReporting;
 
     protected override async Task OnInitializedAsync()
     {
@@ -57,11 +71,35 @@
 
     private void RefreshSurfers()
     {
-
+        isNewSurferRequested = false;
+        notParticipatingSurfers = _surferService.GetAll();
+        notParticipatingSurfers = notParticipatingSurfers.Except(participatingSurfers).ToList();
+        StateHasChanged();
     }
 
     private void SaveSurfer()
     {
         _surferService.AddSurfer(newSurfer);
+        RefreshSurfers();
+    }
+
+    private void UpdateParticipant(WindSurfer windSurfer)
+    {
+        if (participatingSurfers.Contains(windSurfer))
+        {
+            notParticipatingSurfers.Add(windSurfer);
+            participatingSurfers.Remove(windSurfer);
+        }
+        else{
+            participatingSurfers.Add(windSurfer);
+            notParticipatingSurfers.Remove(windSurfer);
+        }
+        StateHasChanged();
+    }
+
+    private void RequestnewSurferForm()
+    {
+        isNewSurferRequested = true;
+        newSurfer = new();
     }
 }
