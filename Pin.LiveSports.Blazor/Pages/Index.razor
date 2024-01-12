@@ -6,30 +6,7 @@
 @inject ITournamentService tournamentService
 
 
-
-@foreach (var tournament in tournaments)
-{
-    <table>
-        <thead>
-            <tr>
-                <th>Tornooi :</th>
-                <th>Aantal deelnemers:</th>
-                <th>Begonnen ?</th>
-                <th>afgerond ?</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>@tournament.Name</td>
-                <td>@tournament.Competitors.Count</td>
-                <td>@(tournament.HasStarted? "ja" : "nee")</td>
-                <td>@(tournament.HasCompleted? "ja" : "nee")</td>
-                <td><button></button></td>
-            </tr>
-        </tbody>
-    </table>
-}
+<TournamentList isReporter=false Tournaments="tournaments"/>
 
 
 
@@ -52,7 +29,11 @@
             matchHistory = _matchService.GetMatchHistory();
             StateHasChanged();
         });
-
+        hubConnection.On("newTournament", () =>
+        {
+            tournaments = tournamentService.GetAll();
+            StateHasChanged();
+        });
         await hubConnection.StartAsync();
 
         await base.OnInitializedAsync();
