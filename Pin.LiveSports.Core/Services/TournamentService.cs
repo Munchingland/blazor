@@ -50,5 +50,35 @@ namespace Pin.LiveSports.Core.Services
         {
             return _tournaments.FirstOrDefault(t => t.Id == id);
         }
+
+        public void UpdateTournament(Tournament tournament, List<WindSurfer> competitors, List<WindSurfer> notCompeting)
+        {
+            foreach(var competitor in competitors)
+            {
+                if (!tournament.Competitors.Select(c => c.Surfer.Id).Contains(competitor.Id))
+                {
+                    var comp = new Competitor
+                    {
+                        Id = tournament.Competitors.Select(c => c.Id).DefaultIfEmpty(1).Max(),
+                        Surfer = competitor,
+                    };
+                    tournament.Competitors.Add(comp);
+                }
+            }
+            foreach(var competitor in notCompeting)
+            {
+                if (tournament.Competitors.Select(c => c.Surfer.Id).Contains(competitor.Id))
+                {
+                    var comp = tournament.Competitors.FirstOrDefault(s=>s.Surfer.Id == competitor.Id);
+                    tournament.Competitors.Remove(comp);
+                }
+            }
+            Tournament tournamentToUpdate = GetById(tournament.Id);
+            tournamentToUpdate.Competitors = tournament.Competitors;
+            tournamentToUpdate.HasStarted = tournament.HasStarted;
+            tournamentToUpdate.MatchHistory = tournament.MatchHistory;
+            tournamentToUpdate.HasCompleted = tournament.HasCompleted;
+
+        }
     }
 }
