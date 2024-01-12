@@ -10,7 +10,7 @@ namespace Pin.LiveSports.Core.Models
     {
         public int Id { get; set; }
         public List<Competitor> Competitors { get; set; }
-        public List<MatchUpdate> MatchHistory { get; set; }
+        public List<MatchUpdate>? MatchHistory { get; set; } = new List<MatchUpdate>();
         public string Name { get; set; }
 
     }
