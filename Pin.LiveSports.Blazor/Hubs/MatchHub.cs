@@ -12,10 +12,9 @@ namespace Pin.LiveSports.Blazor.Hubs
            _matchService = matchService;
         }
 
-        public async Task SendUpdate(MatchUpdate update)
+        public async Task SendUpdate(int tournamentId)
         {
-            _matchService.AddUpdateToHistory(update);
-            await Clients.All.SendAsync("matchUpdate",update);
+            await Clients.All.SendAsync("matchUpdate",tournamentId);
         }
         public async Task NewTournament()
         {
