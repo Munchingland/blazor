@@ -13,7 +13,7 @@ namespace Pin.LiveSports.Core.Services.Interfaces
         List<Tournament> GetAll();
         Tournament GetById(int id);
         void UpdateTournament(Tournament tournamentToUpdate, List<WindSurfer> competitors, List<WindSurfer>notCompeting);
-
+        List<MatchUpdate> GetTournamentHistory(int tournamentId);
         List<string> GetPhasesInTournament();
     }
 }

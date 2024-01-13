@@ -17,6 +17,11 @@ namespace Pin.LiveSports.Core.Services
             _tournaments = new List<Tournament>();
         }
 
+        public List<MatchUpdate> GetTournamentHistory(int tournamentId)
+        {
+            var tournament = GetById(tournamentId);
+            return tournament.MatchHistory;
+        }
 
         public void CreateTournament(List<WindSurfer> windSurfers, string name)
         {
@@ -27,9 +32,10 @@ namespace Pin.LiveSports.Core.Services
             {
                 var comp = new Competitor
                 {
-                    Id = competitors.Select(c => c.Id).DefaultIfEmpty(1).Max(),
+                    Id = competitors.Any() ? competitors.Max(c => c.Id+1) : 1,
                     Surfer = surfer,
                 };
+                comp.PointsGained = new List<PointGain>();
                 competitors.Add(comp);
             }
 
@@ -54,7 +60,7 @@ namespace Pin.LiveSports.Core.Services
 
         public List<string> GetPhasesInTournament()
         {
-            return new List<string>() { Constants.Intro, Constants.Single, Constants.Combo, Constants.SwitchStance, Constants.Air, Constants.Power, Constants.Final };
+            return new List<string>() { Constants.Intro, Constants.Single, Constants.Combo, Constants.SwitchStance, Constants.Air, Constants.Power, Constants.Final, Constants.Start };
         }
 
         public void UpdateTournament(Tournament tournament, List<WindSurfer> competitors, List<WindSurfer> notCompeting)
@@ -65,10 +71,9 @@ namespace Pin.LiveSports.Core.Services
                 {
                     var comp = new Competitor
                     {
-                        Id = tournament.Competitors.Select(c => c.Id).DefaultIfEmpty(1).Max(),
+                        Id = tournament.Competitors.Any() ? tournament.Competitors.Max(c => c.Id+1): 1,
                         Surfer = competitor,
                     };
-                    AddPhasesToCompetitor(comp);
                     tournament.Competitors.Add(comp);
                 }
             }
@@ -85,19 +90,6 @@ namespace Pin.LiveSports.Core.Services
             tournamentToUpdate.HasStarted = tournament.HasStarted;
             tournamentToUpdate.MatchHistory = tournament.MatchHistory;
             tournamentToUpdate.HasCompleted = tournament.HasCompleted;
-        }
-
-        private void AddPhasesToCompetitor(Competitor comp)
-        {
-            comp.PointsGained = new List<PointGain>();
-            List<string> phases = GetPhasesInTournament();
-            foreach (string phase in phases)
-            {
-                comp.PointsGained.Add(new PointGain
-                {
-                    Phase = phase,
-                });
-            }
         }
     }
 }
