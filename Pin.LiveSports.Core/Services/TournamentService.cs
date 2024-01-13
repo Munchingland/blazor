@@ -52,6 +52,11 @@ namespace Pin.LiveSports.Core.Services
             return _tournaments.FirstOrDefault(t => t.Id == id);
         }
 
+        public List<string> GetPhasesInTournament()
+        {
+            return new List<string>() { Constants.Intro, Constants.Single, Constants.Combo, Constants.SwitchStance, Constants.Air, Constants.Power, Constants.Final };
+        }
+
         public void UpdateTournament(Tournament tournament, List<WindSurfer> competitors, List<WindSurfer> notCompeting)
         {
             foreach(var competitor in competitors)
@@ -80,14 +85,12 @@ namespace Pin.LiveSports.Core.Services
             tournamentToUpdate.HasStarted = tournament.HasStarted;
             tournamentToUpdate.MatchHistory = tournament.MatchHistory;
             tournamentToUpdate.HasCompleted = tournament.HasCompleted;
-
         }
-
 
         private void AddPhasesToCompetitor(Competitor comp)
         {
             comp.PointsGained = new List<PointGain>();
-            List<string> phases= new List<string>() { Constants.Intro, Constants.Single, Constants.Combo, Constants.SwitchStance, Constants.Air, Constants.Power, Constants.Final };
+            List<string> phases = GetPhasesInTournament();
             foreach (string phase in phases)
             {
                 comp.PointsGained.Add(new PointGain
