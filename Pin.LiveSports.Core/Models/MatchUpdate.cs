@@ -14,6 +14,7 @@ namespace Pin.LiveSports.Core.Models
         [Required(ErrorMessage = "gelieve een update te geven")]
         public string UpdateMessage { get; set; }
 
+        public string Phase { get; set; }
         public DateTime Time { get; set; }
 
         public string FullUpdate
