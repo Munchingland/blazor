@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Pin.LiveSports.Blazor.Hubs;
+using Pin.LiveSports.Core;
 using Pin.LiveSports.Core.Services;
 using Pin.LiveSports.Core.Services.Interfaces;
 
