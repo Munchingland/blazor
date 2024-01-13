@@ -1,12 +1,15 @@
 ﻿@page "/tournament/{Id:int}"
+@using Pin.LiveSports.Core;
 @inject ITournamentService _tournamentService
+@inject NavigationManager _navigationManager
+@inject IMatchService _matchService
 
 <table class="table table-striped">
     <thead>
         <tr>
 
             <th>deelnemers</th>
-            <th></th>
+            <th>Aantal fases gedaan</th>
         </tr>
     </thead>
     <tbody>
@@ -14,22 +17,41 @@
         {
             <tr>
                 <td>@surfer.Surfer.Name</td>
-                <td>@surfer.PointsGained</td>
+                <td>@surfer.PointsGained.Count</td>
             </tr>
         }
     </tbody>
 </table>
+@foreach(var update in matchHistory)
+{
+    <div>@update.FullUpdate</div>
+}
 
 @code {
     [Parameter]
     public int Id { get; set; }
 
+    private List<MatchUpdate> matchHistory = new List<MatchUpdate>();
     public Tournament ChosenTournament { get; set; }
+    private HubConnection hubConnection;
 
-
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        hubConnection = new HubConnectionBuilder()
+                       .WithUrl(_navigationManager.ToAbsoluteUri(Constants.MatchHubUrl))
+                       .Build();
+
+        hubConnection.On<int>("matchUpdate", (update) =>
+        {
+            if(Id== update)
+            {
+                matchHistory = _tournamentService.GetTournamentHistory(update);
+            }
+            StateHasChanged();
+        });
+
         ChosenTournament = _tournamentService.GetById(Id);
-        base.OnInitialized();
+        await hubConnection.StartAsync();
+        await base.OnInitializedAsync();
     }
 }
