@@ -10,6 +10,6 @@ namespace Pin.LiveSports.Core.Services.Interfaces
     public interface IMatchService
     {
         public List<MatchUpdate> GetMatchHistory();
-        public void AddUpdateToHistory(MatchUpdate update);
+        public void AddUpdateToHistory(UpdateHistoryModel update);
     }
 }

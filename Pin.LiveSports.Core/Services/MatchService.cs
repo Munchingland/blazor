@@ -16,9 +16,11 @@ namespace Pin.LiveSports.Core.Services
             return matchHistory;
         }
 
-        public void AddUpdateToHistory(MatchUpdate update)
-        {
-            matchHistory.Add(update);
+        public void AddUpdateToHistory(UpdateHistoryModel update )
+        { 
+            update.TournamentToUpdateHistory.HasStarted = true;
+            update.TournamentToUpdateHistory.MatchHistory.Add(update.MatchUpdate);
+            update.Competitor.PointsGained.Add(update.PointGain);
         }
     }
 }
