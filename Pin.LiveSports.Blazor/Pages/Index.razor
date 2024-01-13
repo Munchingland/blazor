@@ -35,6 +35,7 @@
             tournaments = tournamentService.GetAll();
             StateHasChanged();
         });
+
         await hubConnection.StartAsync();
 
         await base.OnInitializedAsync();
