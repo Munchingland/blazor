@@ -13,5 +13,7 @@ namespace Pin.LiveSports.Core.Models
         public int DifficultyOfManuevers { get; set; }
         public int HeightAndAirTime { get; set; }
         public int InnovationAndCreativity { get; set; }
+        public string Phase { get; set; }
+        public int TotalPoints { get; set; }
     }
 }

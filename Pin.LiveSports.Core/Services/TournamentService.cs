@@ -3,6 +3,7 @@ using Pin.LiveSports.Core.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -62,6 +63,7 @@ namespace Pin.LiveSports.Core.Services
                         Id = tournament.Competitors.Select(c => c.Id).DefaultIfEmpty(1).Max(),
                         Surfer = competitor,
                     };
+                    AddPhasesToCompetitor(comp);
                     tournament.Competitors.Add(comp);
                 }
             }
@@ -79,6 +81,20 @@ namespace Pin.LiveSports.Core.Services
             tournamentToUpdate.MatchHistory = tournament.MatchHistory;
             tournamentToUpdate.HasCompleted = tournament.HasCompleted;
 
+        }
+
+
+        private void AddPhasesToCompetitor(Competitor comp)
+        {
+            comp.PointsGained = new List<PointGain>();
+            List<string> phases= new List<string>() { Constants.Intro, Constants.Single, Constants.Combo, Constants.SwitchStance, Constants.Air, Constants.Power, Constants.Final };
+            foreach (string phase in phases)
+            {
+                comp.PointsGained.Add(new PointGain
+                {
+                    Phase = phase,
+                });
+            }
         }
     }
 }
