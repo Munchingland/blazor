@@ -3,14 +3,10 @@
 @inject NavigationManager _navigationManager;
 @inject IWindSurferService _surferService;
 @inject ITournamentService _tournamentService;
+@inject IMatchService _matchService;
 @using Pin.LiveSports.Blazor.Components;
 @using Pin.LiveSports.Core;
 
-
-@if (previousUpdate.UpdateMessage != null)
-{
-    <div>Vorige update : @previousUpdate.UpdateMessage</div>
-}
 @if (!isEditingTournaments && !isReporting)
 {
     <button class="btn btn-outline-primary" @onclick="()=>RequestTournamentChanged()">Voeg een nieuwe toernooi toe</button>
@@ -26,7 +22,7 @@
     {
             <button class="btn btn-outline-primary" @onclick="()=>RequestNewSurferForm()">Voeg nieuwe windsurfer toe</button>
             <button class="btn btn-outline-secondary" @onclick="()=>RequestTournamentChanged()">annuleer nieuw toernooi</button>
-            <EditForm Model="tournamentNewOrEdit" OnValidSubmit="AddNewTournament">
+        <EditForm Model="tournamentNewOrEdit" OnValidSubmit="AddNewTournament">
             <DataAnnotationsValidator />
                 <div class="form-group">
                     <label for="name">Naam :</label>
@@ -34,14 +30,14 @@
                 <ValidationMessage For="@(()=>tournamentNewOrEdit.Name)" />
                 </div>
 
-                @if(participatingSurfers.Count >= 2)
+                @if(tournamentNewOrEdit.Surfers.Count >= 2)
                 {
                     <button class="btn btn-outline-primary">Sla toernooi op</button>
                 }
             </EditForm>
-            @if(participatingSurfers.Count> 0)
+            @if(tournamentNewOrEdit.Surfers.Count> 0)
             {
-                <WindSurferList WindSurfers="participatingSurfers" ButtonText="deelt niet mee" TableTitle="windsurfers die deelnemen" UpdateSurfer="UpdateParticipant" />
+                <WindSurferList WindSurfers="tournamentNewOrEdit.Surfers" ButtonText="deelt niet mee" TableTitle="windsurfers die deelnemen" UpdateSurfer="UpdateParticipant" />
             }
             <WindSurferList WindSurfers="notParticipatingSurfers" ButtonText="deelt mee" TableTitle="windsurfers die niet deelnemen" UpdateSurfer="UpdateParticipant" />
     }
@@ -52,6 +48,47 @@
 }
 @if (isReporting)
 {
+    if(selectedPhase == null)
+    {
+        <label>Surfer aan de beurt :</label>
+        <select onchange="@((ChangeEventArgs args)=>UpdateSelectedCompetitor(args.Value.ToString()))">
+            @foreach (var competitor in reportTournament.Competitors)
+            {
+                <option value="@competitor.Id">@competitor.Surfer.Name</option>
+            }
+        </select>
+    }
+    if (selectedCompetitor.Surfer != null)
+    {
+        <div>
+            <label>Fase :</label>
+            <select @bind="selectedPhase">
+                @foreach (var phase in phases)
+                {
+                    <option value="@phase">@phase</option>
+                }
+            </select>
+
+        </div>
+
+    }
+
+    @if (selectedPhase != null)
+    {
+        @if (selectedPhase == Constants.Start)
+        {
+            <EditForm Model="matchUpdate" OnValidSubmit="SubmitTournamentUpdate">
+                <DataAnnotationsValidator />
+                <div class="form-group">
+                    <label for="start">Start van @selectedCompetitor.Surfer.Name routine :</label>
+                    <InputText id="start" class="form-control" @bind-Value="matchUpdate.UpdateMessage" />
+                    <ValidationMessage For="@(()=>matchUpdate.UpdateMessage)" />
+                </div>
+                <button class="btn btn-outline-primary">Stuur update door</button>
+            </EditForm>
+        }
+    }
+   
     
 }
 
@@ -59,7 +96,6 @@
     #region setup
     private HubConnection hubConnection;
     private MatchUpdate matchUpdate = new();
-    private MatchUpdate previousUpdate = new();
 
     private bool isNewSurferRequested = false;
 
@@ -67,9 +103,12 @@
     private Tournament tournamentNewOrEdit = new();
     private Tournament reportTournament = new();
 
-    private List<WindSurfer> participatingSurfers = new();
     private List<WindSurfer> notParticipatingSurfers = new();
     private List<Tournament> tournaments;
+    private List<string> phases;
+    private string selectedPhase;
+    private Competitor selectedCompetitor = new();
+    private int selectedCompetitorId;
 
     private bool isEditingTournaments;
     private bool isReporting;
@@ -85,24 +124,17 @@
         tournaments = _tournamentService.GetAll();
         await base.OnInitializedAsync();
     }
+
     #endregion
 
-    #region hubMessage
-    private async Task SendUpdate()
-    {
-        matchUpdate.Time = DateTime.Now;
-        await hubConnection.SendAsync("SendUpdate", matchUpdate);
-        previousUpdate = matchUpdate;
-        matchUpdate.UpdateMessage = string.Empty;
-    }
-    #endregion
+
 
     #region Surfer
     private void RefreshSurfers()
     {
         isNewSurferRequested = false;
         notParticipatingSurfers = _surferService.GetAll();
-        notParticipatingSurfers = notParticipatingSurfers.Except(participatingSurfers).ToList();
+        notParticipatingSurfers = notParticipatingSurfers.Except(tournamentNewOrEdit.Surfers).ToList();
         StateHasChanged();
     }
 
@@ -114,13 +146,13 @@
 
     private void UpdateParticipant(WindSurfer windSurfer)
     {
-        if (participatingSurfers.Contains(windSurfer))
+        if (tournamentNewOrEdit.Surfers.Contains(windSurfer))
         {
             notParticipatingSurfers.Add(windSurfer);
-            participatingSurfers.Remove(windSurfer);
+            tournamentNewOrEdit.Surfers.Remove(windSurfer);
         }
         else{
-            participatingSurfers.Add(windSurfer);
+            tournamentNewOrEdit.Surfers.Add(windSurfer);
             notParticipatingSurfers.Remove(windSurfer);
         }
         StateHasChanged();
@@ -140,19 +172,30 @@
         tournamentNewOrEdit = new();
         if (isEditingTournaments)
         {
-            participatingSurfers = new();
+            tournamentNewOrEdit.Surfers = new();
             RefreshSurfers();
         }
     }
+
+    private Task<bool> OnTournamentSubmit()
+    {
+        if (tournamentNewOrEdit.Surfers.Count < 1)
+        {
+            return Task.FromResult(false);
+        }
+        return Task.FromResult(true);
+    }
+
+
     private async Task AddNewTournament()
     {
         if (tournamentNewOrEdit.Id == 0)
         {
-            _tournamentService.CreateTournament(participatingSurfers, tournamentNewOrEdit.Name);
+            _tournamentService.CreateTournament(tournamentNewOrEdit.Surfers, tournamentNewOrEdit.Name);
         }
         else
         {
-            _tournamentService.UpdateTournament(tournamentNewOrEdit, participatingSurfers, notParticipatingSurfers);
+            _tournamentService.UpdateTournament(tournamentNewOrEdit, tournamentNewOrEdit.Surfers, notParticipatingSurfers);
         }
         await hubConnection.SendAsync("NewTournament");
         isEditingTournaments = false;
@@ -163,7 +206,7 @@
     {
         tournamentNewOrEdit = tournament;
         isEditingTournaments = true;
-        participatingSurfers = tournamentNewOrEdit.Competitors.Select(d => d.Surfer).ToList();
+        tournamentNewOrEdit.Surfers = tournamentNewOrEdit.Competitors.Select(d => d.Surfer).ToList();
     }
     #endregion
 
@@ -173,5 +216,75 @@
         isReporting = true;
     }
 
+    private void UpdateSelectedCompetitor(string idString)
+    {
+        var id = int.Parse(idString);
+        selectedCompetitor = reportTournament.Competitors.FirstOrDefault(c => c.Id == id);
+        LoadPhasesStillToDo();
+        if (phases.Contains(Constants.Start))
+        {
+            selectedPhase = Constants.Start;
+            SubmitTournamentUpdate();
+            LoadPhasesStillToDo();
+        }
+        StateHasChanged();
+    }
+
+    private void LoadPhasesStillToDo()
+    {
+        phases = new List<string>();
+        phases.Add(Constants.Start);
+        var toAdd = _tournamentService.GetPhasesInTournament();
+        foreach (var add in toAdd)
+        {
+            phases.Add(add);
+        }
+        if(selectedCompetitor.PointsGained != null)
+        {
+            var phasesToRemove = new List<string>();
+            foreach (var phase in phases)
+            {
+                if(selectedCompetitor.PointsGained.Select(c=>c.Phase).Contains(phase))
+                {
+                    phasesToRemove.Add(phase);
+                }
+            }
+            foreach(var phase in phasesToRemove)
+            {
+                phases.Remove(phase);
+            }
+        }
+
+    }
+
+    private void SubmitTournamentUpdate()
+    {
+        if(selectedPhase == Constants.Start)
+        {
+            matchUpdate.UpdateMessage = $"De start van {selectedCompetitor.Surfer.Name} routine";
+            matchUpdate.Phase = selectedPhase;
+        }
+        var updateHistoryModel = new UpdateHistoryModel()
+        {
+            Competitor = selectedCompetitor,
+            PointGain = new PointGain
+            {
+                Phase = selectedPhase,
+            },
+            MatchUpdate = matchUpdate,
+
+            TournamentToUpdateHistory = reportTournament
+        };
+        _matchService.AddUpdateToHistory(updateHistoryModel);
+        SendUpdate(reportTournament.Id);
+        selectedPhase = "";
+    }
+
+    #region hubMessage
+    private async Task SendUpdate(int tournamentId)
+    {
+        await hubConnection.SendAsync("SendUpdate", tournamentId);
+    }
+    #endregion
 
 }
