@@ -1,9 +1,10 @@
-﻿
+﻿@using Pin.LiveSports.Core;
+
 <table class="table table-striped">
    
         <thead>
             <tr>
-                <th>Tornooi :</th>
+                <th>@Constants.Tournament :</th>
                 <th>Aantal deelnemers:</th>
                 <th>Begonnen ?</th>
                 <th>afgerond ?</th>
@@ -26,7 +27,13 @@
                 }
                 @if (isReporter)
                 {
-                    <td><button class="btn btn-warning" @onclick="(e=> OpenTournament.InvokeAsync(tournament))">Update toernooi</button></td>
+                    @if(!tournament.HasStarted){
+                        <td><button class="btn btn-warning" @onclick="(e=> OpenTournament.InvokeAsync(tournament))">Update toernooi</button></td>
+                    }
+                    @if (tournament.HasStarted)
+                    {
+                        <td></td>
+                    }
                     <td><button class="btn btn-primary">Reporteer toernooi</button></td>
                 }
             </tr>
