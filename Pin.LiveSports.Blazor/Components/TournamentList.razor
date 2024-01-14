@@ -32,9 +32,16 @@
                     }
                     @if (tournament.HasStarted)
                     {
-                        <td></td>
+                        <td>is begonnen kan niet meer veranderen</td>
                     }
-                    <td><button class="btn btn-primary" @onclick="(e=> StartReport.InvokeAsync(tournament))">Reporteer toernooi</button></td>
+                    @if (!tournament.HasCompleted)
+                    {
+                        <td><button class="btn btn-primary" @onclick="(e=> StartReport.InvokeAsync(tournament))">Reporteer toernooi</button></td>
+                    }
+                    @if (tournament.HasCompleted)
+                    {
+                        <td>is gedaan. Niets meer op te rapporteren.</td>
+                    }
                 }
             </tr>
         }
