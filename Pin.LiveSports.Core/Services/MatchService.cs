@@ -18,9 +18,38 @@ namespace Pin.LiveSports.Core.Services
 
         public void AddUpdateToHistory(UpdateHistoryModel update )
         { 
+            update.MatchUpdate.Time = DateTime.Now;
+            if(update.MatchUpdate.Phase == Constants.Start)
+            {
+                update.MatchUpdate.UpdateMessage = $"De start van {update.Competitor.Surfer.Name} routine";
+            }
+            else
+            {
+                foreach(var point in update.MatchUpdate.PointGain.GetType().GetProperties())
+                {
+                    var value = point.GetValue(update.MatchUpdate.PointGain);
+                    if(point.PropertyType != typeof(double?))
+                    {
+                        if (value == null)
+                        {
+                            point.SetValue(update.MatchUpdate.PointGain, 1);
+                        }
+                    }
+                    
+                }
+
+                var total = update.MatchUpdate.PointGain.DifficultyOfManuevers +
+                        update.MatchUpdate.PointGain.StyleAndFluidity +
+                        update.MatchUpdate.PointGain.VarietyOfTricks +
+                        update.MatchUpdate.PointGain.HeightAndAirTime +
+                        update.MatchUpdate.PointGain.InnovationAndCreativity;
+                update.MatchUpdate.PointGain.TotalPoints = total;
+                update.MatchUpdate.PointGain.AveragePoints = total / 5;
+            }
+
             update.TournamentToUpdateHistory.HasStarted = true;
             update.TournamentToUpdateHistory.MatchHistory.Add(update.MatchUpdate);
-            update.Competitor.PointsGained.Add(update.PointGain);
+            update.Competitor.PointsGained.Add(update.MatchUpdate.PointGain);
         }
     }
 }
