@@ -13,7 +13,8 @@ namespace Pin.LiveSports.Core.Models
     {
         [Required(ErrorMessage = "gelieve een update te geven")]
         public string UpdateMessage { get; set; }
-
+        public PointGain PointGain { get; set; } = new();
+        public string SurferName { get; set; }
         public string Phase { get; set; }
         public DateTime Time { get; set; }
 
@@ -21,7 +22,11 @@ namespace Pin.LiveSports.Core.Models
         {
             get
             {
-                return $"{TimeOnly.FromDateTime(Time)}: {UpdateMessage}";
+                if(PointGain.TotalPoints!= null)
+                {
+                    return $"{UpdateMessage} en kreeg een totaal van {PointGain.TotalPoints} punten die omgezet worden naar {PointGain.AveragePoints} voor deze fase";
+                }
+                return $"{UpdateMessage}";
             }
         }
     }
