@@ -1,19 +1,18 @@
-﻿
+﻿@using Pin.LiveSports.Core
 
 <table>
     <thead>
         <tr>
-            <th>
-                
-            </th>
-           
+            <th>Surfer</th>
+            <th>Time</th>
+            <th>Update</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td>
-                @HistoryItem.FullUpdate
-            </td>
+            <td>@HistoryItem.SurferName |</td>
+            <td>@HistoryItem.Time |</td>
+            <td>@HistoryItem.FullUpdate</td>
         </tr>
     </tbody>
 </table>
@@ -21,4 +20,10 @@
 @code {
     [Parameter]
     public MatchUpdate HistoryItem { get; set; }
+
+    [Parameter]
+    public bool HasFinished { get; set; }
+
+    [Parameter]
+    public bool HasWon { get; set; }
 }
