@@ -52,44 +52,92 @@
     {
         <label>Surfer aan de beurt :</label>
         <select onchange="@((ChangeEventArgs args)=>UpdateSelectedCompetitor(args.Value.ToString()))">
-            @foreach (var competitor in reportTournament.Competitors)
+            <option>--Selecteer een windsurfer--</option>
+            @foreach (var competitor in reportTournament.Competitors.Where(c=>c.FinishedRoutine==false))
             {
                 <option value="@competitor.Id">@competitor.Surfer.Name</option>
             }
         </select>
     }
-    if (selectedCompetitor.Surfer != null)
+    if(selectedCompetitor!= null)
     {
-        <div>
-            <label>Fase :</label>
-            <select @bind="selectedPhase">
-                @foreach (var phase in phases)
-                {
-                    <option value="@phase">@phase</option>
-                }
-            </select>
-
-        </div>
-
-    }
-
-    @if (selectedPhase != null)
-    {
-        @if (selectedPhase == Constants.Start)
+        if (selectedCompetitor.Surfer != null)
         {
-            <EditForm Model="matchUpdate" OnValidSubmit="SubmitTournamentUpdate">
-                <DataAnnotationsValidator />
-                <div class="form-group">
-                    <label for="start">Start van @selectedCompetitor.Surfer.Name routine :</label>
-                    <InputText id="start" class="form-control" @bind-Value="matchUpdate.UpdateMessage" />
-                    <ValidationMessage For="@(()=>matchUpdate.UpdateMessage)" />
-                </div>
-                <button class="btn btn-outline-primary">Stuur update door</button>
-            </EditForm>
+            <div>
+                <label>Fase :</label>
+                <select @onchange="HandleSelectChange">
+                    <option value="--selecteer een phase--">--selecteer een phase--</option>
+                    @foreach (var phase in phases)
+                    {
+                        <option value="@phase">@phase</option>
+                    }
+                </select>
+
+            </div>
+
+            @if (selectedPhase != null  || selectedPhase != "")
+            {
+                @if (selectedPhase != Constants.Start && selectedPhase != "--selecteer een phase--")
+                {
+                    <EditForm Model="matchUpdate" OnValidSubmit="SubmitTournamentUpdate">
+                        <DataAnnotationsValidator />
+
+                        <div class="form-group">
+                            <label>Stijl en vloeibaarheid :</label>
+                            <select @bind=matchUpdate.PointGain.StyleAndFluidity>
+                                @foreach (var score in scoresToGive)
+                                {
+                                    <option value="@score">@score</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Verscheidenheid in trucs :</label>
+                            <select @bind=matchUpdate.PointGain.VarietyOfTricks>
+                                @foreach (var score in scoresToGive)
+                                {
+                                    <option value="@score">@score</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Moeilijkheid van mannuever :</label>
+                            <select @bind=matchUpdate.PointGain.DifficultyOfManuevers>
+                                @foreach (var score in scoresToGive)
+                                {
+                                    <option value="@score">@score</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Hoogte en lucht tijd :</label>
+                            <select @bind=matchUpdate.PointGain.HeightAndAirTime>
+                                @foreach (var score in scoresToGive)
+                                {
+                                    <option value="@score">@score</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>innovatie en creativiteit :</label>
+                            <select @bind=matchUpdate.PointGain.InnovationAndCreativity>
+                                @foreach (var score in scoresToGive)
+                                {
+                                    <option value="@score">@score</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="start">@selectedCompetitor.Surfer.Name routine Update:</label>
+                            <InputText id="start" class="form-control" @bind-Value="matchUpdate.UpdateMessage" />
+                            <ValidationMessage For="@(()=>matchUpdate.UpdateMessage)" />
+                        </div>
+                        <button class="btn btn-outline-primary">Stuur update door</button>
+                    </EditForm>
+                }
+            }
         }
-    }
-   
-    
+    }    
 }
 
 @code{
@@ -110,6 +158,7 @@
     private Competitor selectedCompetitor = new();
     private int selectedCompetitorId;
 
+    private List<int?> scoresToGive = new();
     private bool isEditingTournaments;
     private bool isReporting;
 
@@ -119,15 +168,16 @@
                         .WithUrl(_navigationManager.ToAbsoluteUri(Constants.MatchHubUrl))
                         .Build();
 
+        for (int? i = 1; i < 11; i++)
+        {
+            scoresToGive.Add(i);
+        }
         await hubConnection.StartAsync();
         notParticipatingSurfers = _surferService.GetAll();
         tournaments = _tournamentService.GetAll();
         await base.OnInitializedAsync();
     }
-
     #endregion
-
-
 
     #region Surfer
     private void RefreshSurfers()
@@ -252,32 +302,51 @@
             foreach(var phase in phasesToRemove)
             {
                 phases.Remove(phase);
+
+            }
+            if(phases.Count == 0)
+            {
+                selectedCompetitor.FinishedRoutine = true;
+                selectedCompetitor = null;
+                selectedPhase = null;
+                var competitor = reportTournament.Competitors.Where(c => c.FinishedRoutine == false).ToList();
+                if(competitor.Count == 0)
+                {
+                    reportTournament.HasCompleted = true;
+                    var winner = reportTournament.Competitors.OrderByDescending(c => c.TotalPointsGained).FirstOrDefault();
+                    winner.WonCompetition = true;
+                    isReporting = false;
+                    SendUpdate(reportTournament.Id);
+                }
             }
         }
-
+        StateHasChanged();
     }
 
     private void SubmitTournamentUpdate()
     {
-        if(selectedPhase == Constants.Start)
-        {
-            matchUpdate.UpdateMessage = $"De start van {selectedCompetitor.Surfer.Name} routine";
-            matchUpdate.Phase = selectedPhase;
-        }
+        matchUpdate.Phase = selectedPhase;
+        matchUpdate.SurferName = selectedCompetitor.Surfer.Name;
+        matchUpdate.PointGain.Phase = selectedPhase;
         var updateHistoryModel = new UpdateHistoryModel()
         {
             Competitor = selectedCompetitor,
-            PointGain = new PointGain
-            {
-                Phase = selectedPhase,
-            },
             MatchUpdate = matchUpdate,
-
-            TournamentToUpdateHistory = reportTournament
+            TournamentToUpdateHistory = reportTournament,
         };
         _matchService.AddUpdateToHistory(updateHistoryModel);
         SendUpdate(reportTournament.Id);
-        selectedPhase = "";
+        matchUpdate = new();
+        matchUpdate.PointGain = new();
+        selectedPhase = "--selecteer een phase--";
+        LoadPhasesStillToDo();
+        
+    }
+
+    private void HandleSelectChange(ChangeEventArgs e)
+    {
+        selectedPhase = e.Value.ToString();
+        StateHasChanged();
     }
 
     #region hubMessage
