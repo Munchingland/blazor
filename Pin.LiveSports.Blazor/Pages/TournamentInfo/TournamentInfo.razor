@@ -1,5 +1,6 @@
 ﻿@page "/tournament/{Id:int}"
 @using Pin.LiveSports.Core;
+@using Pin.LiveSports.Blazor.Components;
 @inject ITournamentService _tournamentService
 @inject NavigationManager _navigationManager
 @inject IMatchService _matchService
@@ -10,6 +11,9 @@
 
             <th>deelnemers</th>
             <th>Aantal fases gedaan</th>
+            <th>Totaal aantal punten</th>
+            <th>Afgerond totaal</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -17,14 +21,40 @@
         {
             <tr>
                 <td>@surfer.Surfer.Name</td>
-                <td>@surfer.PointsGained.Count</td>
+                @if (surfer.PointsGained.Count >= 2)
+                {
+                    <td>@(surfer.PointsGained.Count-1)</td>
+                }
+                @if (surfer.PointsGained.Count <= 2)
+                {
+                    <td></td>
+                }
+                
+                <td>@surfer.PointsGained.Sum(p=>p.TotalPoints)</td>
+
+                @if (surfer.PointsGained.Count >= 2)
+                {
+                    <td>@surfer.PointsGained.Sum(p=>p.AveragePoints)/@((surfer.PointsGained.Count-1) * 10)</td>
+                }
+                @if (surfer.PointsGained.Count <= 2)
+                {
+                    <td></td>
+                }
+                @if (surfer.WonCompetition)
+                {
+                    <td>Winnaar</td>
+                }
+                @if (!surfer.WonCompetition)
+                {
+                    <td></td>
+                }
             </tr>
         }
     </tbody>
 </table>
 @foreach(var update in matchHistory)
 {
-    <div>@update.FullUpdate</div>
+    <MatchHistoryItem HistoryItem="update"/>
 }
 
 @code {
@@ -51,6 +81,7 @@
         });
 
         ChosenTournament = _tournamentService.GetById(Id);
+        matchHistory = _tournamentService.GetTournamentHistory(Id);
         await hubConnection.StartAsync();
         await base.OnInitializedAsync();
     }
