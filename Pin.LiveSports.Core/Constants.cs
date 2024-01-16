@@ -1,4 +1,6 @@
-﻿namespace Pin.LiveSports.Core
+﻿using System.Data;
+
+namespace Pin.LiveSports.Core
 {
     public static class Constants
     {
@@ -17,5 +19,6 @@
         public const string Final = "Laatste beweging";
 
         public const string Start = "start";
+        public const string SelectPhase = "--selecteer een phase--";
     }
 }
