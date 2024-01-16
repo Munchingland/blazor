@@ -205,6 +205,7 @@
     }
     #endregion
 
+    #region report
     private void StartReport(Tournament tournament)
     {
         reportTournament = tournament;
@@ -227,8 +228,10 @@
 
     private void LoadPhasesStillToDo()
     {
-        phases = new List<string>();
-        phases.Add(Constants.Start);
+        phases = new List<string>
+        {
+            Constants.Start
+        };
 
         var toAdd = _tournamentService.GetPhasesInTournament();
         foreach (var add in toAdd)
@@ -297,6 +300,7 @@
         selectedPhase = e.Value.ToString();
         StateHasChanged();
     }
+    #endregion
 
     #region hubMessage
     private async Task SendUpdate(int tournamentId)
