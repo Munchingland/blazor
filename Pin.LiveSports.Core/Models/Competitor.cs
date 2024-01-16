@@ -6,7 +6,7 @@ namespace Pin.LiveSports.Core.Models
     {
         public int Id {  get; set; }
         public WindSurfer Surfer { get; set; }
-        public List<PointGain>? PointsGained { get; set; }
+        public List<PointGain>? PointsGained { get; set; } = new List<PointGain> { };
         public bool WonCompetition { get; set; }
         public bool FinishedRoutine { get; set; }
 
