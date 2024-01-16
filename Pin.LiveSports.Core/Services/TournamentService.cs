@@ -60,7 +60,7 @@ namespace Pin.LiveSports.Core.Services
 
         public List<string> GetPhasesInTournament()
         {
-            return new List<string>() { Constants.Intro, Constants.Single, Constants.Combo, Constants.SwitchStance, Constants.Air, Constants.Power, Constants.Final, Constants.Start };
+            return new List<string>() { Constants.Intro, Constants.Single, Constants.Combo, Constants.SwitchStance, Constants.Air, Constants.Power, Constants.Final };
         }
 
         public void UpdateTournament(Tournament tournament, List<WindSurfer> competitors, List<WindSurfer> notCompeting)
