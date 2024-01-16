@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pin.LiveSports.Core", "Pin.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pin.WhatsNew.CollectionExpression.Cons", "Pin.WhatsNew.CollectionExpression.Cons\Pin.WhatsNew.CollectionExpression.Cons.csproj", "{7D3D734B-477F-4DA7-8B00-EA3A1B702B63}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pin.WhatsNew.DefaultLambda.Cons", "Pin.WhatsNew.DefaultLambda.Cons\Pin.WhatsNew.DefaultLambda.Cons.csproj", "{D51AEE0F-678A-4DB9-95C8-053F64906EB9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{7D3D734B-477F-4DA7-8B00-EA3A1B702B63}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D3D734B-477F-4DA7-8B00-EA3A1B702B63}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D3D734B-477F-4DA7-8B00-EA3A1B702B63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D51AEE0F-678A-4DB9-95C8-053F64906EB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D51AEE0F-678A-4DB9-95C8-053F64906EB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D51AEE0F-678A-4DB9-95C8-053F64906EB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D51AEE0F-678A-4DB9-95C8-053F64906EB9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
