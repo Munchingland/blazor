@@ -1,58 +1,66 @@
-﻿<EditForm Model="MatchUpdate" OnValidSubmit="@(e=> SubmitTournamentUpdate.InvokeAsync(MatchUpdate))">
+﻿<EditForm Model="MatchUpdate" OnValidSubmit="@(e => SubmitTournamentUpdate.InvokeAsync(MatchUpdate))">
     <DataAnnotationsValidator />
 
     <div class="form-group">
-        <label>Stijl en vloeibaarheid :</label>
-        <select @bind=MatchUpdate.PointGain.StyleAndFluidity>
+        <label for="styleFluidity">Stijl en vloeibaarheid:</label>
+        <select id="styleFluidity" class="form-control" @bind="MatchUpdate.PointGain.StyleAndFluidity">
             @foreach (var score in ScoresToGive)
             {
                 <option value="@score">@score</option>
             }
         </select>
     </div>
+
     <div class="form-group">
-        <label>Verscheidenheid in trucs :</label>
-        <select @bind=MatchUpdate.PointGain.VarietyOfTricks>
+        <label for="varietyTricks">Verscheidenheid in trucs:</label>
+        <select id="varietyTricks" class="form-control" @bind="MatchUpdate.PointGain.VarietyOfTricks">
             @foreach (var score in ScoresToGive)
             {
                 <option value="@score">@score</option>
             }
         </select>
     </div>
+
     <div class="form-group">
-        <label>Moeilijkheid van mannuever :</label>
-        <select @bind=MatchUpdate.PointGain.DifficultyOfManuevers>
+        <label for="difficultyManeuvers">Moeilijkheid van mannuever:</label>
+        <select id="difficultyManeuvers" class="form-control" @bind="MatchUpdate.PointGain.DifficultyOfManuevers">
             @foreach (var score in ScoresToGive)
             {
                 <option value="@score">@score</option>
             }
         </select>
     </div>
+
     <div class="form-group">
-        <label>Hoogte en lucht tijd :</label>
-        <select @bind=MatchUpdate.PointGain.HeightAndAirTime>
+        <label for="heightAirTime">Hoogte en lucht tijd:</label>
+        <select id="heightAirTime" class="form-control" @bind="MatchUpdate.PointGain.HeightAndAirTime">
             @foreach (var score in ScoresToGive)
             {
                 <option value="@score">@score</option>
             }
         </select>
     </div>
+
     <div class="form-group">
-        <label>innovatie en creativiteit :</label>
-        <select @bind=MatchUpdate.PointGain.InnovationAndCreativity>
+        <label for="innovationCreativity">Innovatie en creativiteit:</label>
+        <select id="innovationCreativity" class="form-control" @bind="MatchUpdate.PointGain.InnovationAndCreativity">
             @foreach (var score in ScoresToGive)
             {
                 <option value="@score">@score</option>
             }
         </select>
     </div>
+
     <div class="form-group">
-        <label for="start">@SelectedCompetitor.Surfer.Name routine Update:</label>
-        <InputText id="start" class="form-control" @bind-Value="MatchUpdate.UpdateMessage" />
-        <ValidationMessage For="@(()=>MatchUpdate.UpdateMessage)" />
+        <label for="updateMessage">@SelectedCompetitor.Surfer.Name routine Update:</label>
+        <textarea id="updateMessage" class="form-control form-control-lg" @bind="MatchUpdate.UpdateMessage"></textarea>
+        <ValidationMessage For="@(() => MatchUpdate.UpdateMessage)" />
     </div>
-    <button class="btn btn-outline-primary">Stuur update door</button>
+
+
+    <button type="submit" class="btn btn-primary">Stuur update door</button>
 </EditForm>
+
 
 @code {
     [Parameter]
