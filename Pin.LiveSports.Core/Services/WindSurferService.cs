@@ -12,8 +12,6 @@ namespace Pin.LiveSports.Core.Services
     {
         private Random random = new Random();
         private static List<WindSurfer> _windSurfers;
-        
-
 
         public WindSurferService()
         {
