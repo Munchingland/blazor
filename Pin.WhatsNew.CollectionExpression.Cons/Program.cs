@@ -8,6 +8,9 @@
 //Het maakt het initialiseren van alles die een collectie is ook gelijk. Het kunnen mixen van enkel toevoegen of een collectie toevoegen aan de hand van de spread operater lijkt mij
 //ook heel interessant. het is iets dat als de mogelijkheid er is zal ik dit wel gebruiken
 
+//de spread operator(..) lijkt mij als soort van foreach add te werken. waarvan je ook meerdere lijsten kan hebben. Dit kunnen lists zijn, Ienummerable, Arrays.
+//Ze zullen deze samenstellen in 1 lijst zonder dat je zelf een foreach over elke individueel lijst hoeft te doen en .add te doen over elk element
+
 //bv in deze opdracht bij reporter deed ik het origineel zo
 Console.WriteLine("Oude manier :");
 var oldPhases = new List<string>
@@ -25,6 +28,7 @@ foreach (string phase in oldPhases)
     Console.WriteLine(phase);
 }
 Console.WriteLine("--------------------------------------------------------------------------------------------");
+
 //terwijl op de nieuwe manier kan het zo
 Console.WriteLine("Nieuwe manier :");
 List<string> phases = [Constants.Start];
@@ -37,6 +41,7 @@ foreach (string phase in phases)
     Console.WriteLine(phase);
 }
 Console.WriteLine("--------------------------------------------------------------------------------------------");
+
 //of nog korter
 Console.WriteLine("nieuwe kortere manier :");
 var shortToAdd = GetPhasesInTournament();
@@ -46,6 +51,7 @@ foreach (string phase in phases)
     Console.WriteLine(phase);
 }
 Console.WriteLine("--------------------------------------------------------------------------------------------");
+
 //ook de return van methodes kan je hier gebruiken zonder probleem. Niet aangeraden maar wel mogelijk
 Console.WriteLine("functie in expressie:");
 IEnumerable<string> phasesNumerable = oldPhases;
