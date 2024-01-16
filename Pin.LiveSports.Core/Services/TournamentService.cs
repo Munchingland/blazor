@@ -25,7 +25,7 @@ namespace Pin.LiveSports.Core.Services
 
         public void CreateTournament(List<WindSurfer> windSurfers, string name)
         {
-            int id = _tournaments.Select(a => a.Id).DefaultIfEmpty(1).Max();
+            int id = _tournaments.Any() ? _tournaments.Max(t => t.Id + 1) : 1;
             List<Competitor> competitors = new List<Competitor>();
             var i = 0;
             foreach (var surfer in windSurfers)
