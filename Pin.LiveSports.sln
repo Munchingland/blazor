@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pin.WhatsNew.CollectionExpr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pin.WhatsNew.DefaultLambda.Cons", "Pin.WhatsNew.DefaultLambda.Cons\Pin.WhatsNew.DefaultLambda.Cons.csproj", "{D51AEE0F-678A-4DB9-95C8-053F64906EB9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pin.WhatsNew.PrimaryConstructor.Cons", "Pin.WhatsNew.PrimaryConstructor.Cons\Pin.WhatsNew.PrimaryConstructor.Cons.csproj", "{58F862E1-2CF9-4EF7-92E4-18E6AC084372}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{D51AEE0F-678A-4DB9-95C8-053F64906EB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D51AEE0F-678A-4DB9-95C8-053F64906EB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D51AEE0F-678A-4DB9-95C8-053F64906EB9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58F862E1-2CF9-4EF7-92E4-18E6AC084372}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58F862E1-2CF9-4EF7-92E4-18E6AC084372}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58F862E1-2CF9-4EF7-92E4-18E6AC084372}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58F862E1-2CF9-4EF7-92E4-18E6AC084372}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
