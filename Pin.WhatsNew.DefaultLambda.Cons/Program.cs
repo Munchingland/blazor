@@ -1,5 +1,4 @@
 ﻿using Pin.WhatsNew.DefaultLambda.Cons.Models;
-
 #region setup
 List<BaseModel> games = new()
 {
@@ -64,7 +63,6 @@ List<BaseModel> FilterByNameMethod(List<BaseModel> toFilter, string filter = " "
 {
     return toFilter.Where(g => g.Name.ToUpper().Contains(filter.ToUpper())).ToList();
 }
-
 
 var filtered = filterByName(games,"o");
 foreach (var game in filtered)
