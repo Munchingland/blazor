@@ -52,10 +52,9 @@
         }
     </tbody>
 </table>
-@foreach(var update in matchHistory)
-{
-    <MatchHistoryItem HistoryItem="update"/>
-}
+
+<MatchHistoryItem TournamentHistory="matchHistory"/>
+
 
 @code {
     [Parameter]

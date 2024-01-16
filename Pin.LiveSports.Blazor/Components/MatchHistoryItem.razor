@@ -1,7 +1,7 @@
 ﻿@using Pin.LiveSports.Core
 
-<table>
-    <thead>
+<table class="table table-bordered table-striped">
+    <thead class="thead-dark">
         <tr>
             <th>Surfer</th>
             <th>Time</th>
@@ -9,17 +9,21 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td>@HistoryItem.SurferName |</td>
-            <td>@HistoryItem.Time |</td>
-            <td>@HistoryItem.FullUpdate</td>
-        </tr>
+        @foreach (var historyItem in TournamentHistory)
+        {
+            <tr>
+                <td>@historyItem.SurferName</td>
+                <td>@historyItem.Time.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                <td>@historyItem.FullUpdate</td>
+            </tr>
+        }
     </tbody>
 </table>
 
+
 @code {
     [Parameter]
-    public MatchUpdate HistoryItem { get; set; }
+    public List<MatchUpdate> TournamentHistory { get; set; }
 
     [Parameter]
     public bool HasFinished { get; set; }

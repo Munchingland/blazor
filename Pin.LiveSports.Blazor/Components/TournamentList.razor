@@ -1,38 +1,38 @@
 ﻿@using Pin.LiveSports.Core;
 
-<table class="table table-striped">
-   
-        <thead>
-            <tr>
-                <th>@Constants.Tournament :</th>
-                <th>Aantal deelnemers:</th>
-                <th>Begonnen ?</th>
-                <th>afgerond ?</th>
-                <th></th>
-                <th></th>
-            </tr>
-        </thead>
+<table class="table table-bordered table-hover">
+    <thead class="thead-dark">
+        <tr>
+            <th>@Constants.Tournament</th>
+            <th>Aantal deelnemers</th>
+            <th>Begonnen</th>
+            <th>Afgerond</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
     <tbody>
         @foreach (var tournament in Tournaments)
         {
             <tr>
                 <td>@tournament.Name</td>
                 <td>@tournament.Competitors.Count</td>
-                <td>@(tournament.HasStarted ? "ja" : "nee")</td>
-                <td>@(tournament.HasCompleted ? "ja" : "nee")</td>
+                <td>@(tournament.HasStarted ? "Ja" : "Nee")</td>
+                <td>@(tournament.HasCompleted ? "Ja" : "Nee")</td>
                 @if (!isReporter)
                 {
-                    <td><button class="btn btn-primary" @onclick="(e=> OpenTournament.InvokeAsync(tournament))">Zie toernooi</button></td>
+                    <td><button class="btn btn-info" @onclick="(e=> OpenTournament.InvokeAsync(tournament))">Zie toernooi</button></td>
                     <td></td>
                 }
                 @if (isReporter)
                 {
-                    @if(!tournament.HasStarted){
+                    @if (!tournament.HasStarted)
+                    {
                         <td><button class="btn btn-warning" @onclick="(e=> OpenTournament.InvokeAsync(tournament))">Update toernooi</button></td>
                     }
                     @if (tournament.HasStarted)
                     {
-                        <td>is begonnen kan niet meer veranderen</td>
+                        <td><span class="badge badge-success">Begonnen</span></td>
                     }
                     @if (!tournament.HasCompleted)
                     {
@@ -40,14 +40,14 @@
                     }
                     @if (tournament.HasCompleted)
                     {
-                        <td>is gedaan. Niets meer op te rapporteren.</td>
+                        <td><span class="badge badge-secondary">Afgerond</span></td>
                     }
                 }
             </tr>
         }
     </tbody>
-     
 </table>
+
 
 
 

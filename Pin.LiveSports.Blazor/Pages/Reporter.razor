@@ -20,21 +20,19 @@
 {
     @if (!isNewSurferRequested)
     {
-            <button class="btn btn-outline-primary" @onclick="()=>RequestNewSurferForm()">Voeg nieuwe windsurfer toe</button>
-            <button class="btn btn-outline-secondary" @onclick="()=>RequestTournamentChanged()">annuleer nieuw toernooi</button>
+        <button class="btn btn-outline-primary" @onclick="()=>RequestNewSurferForm()">Voeg nieuwe windsurfer toe</button>
+        <button class="btn btn-outline-secondary" @onclick="()=>RequestTournamentChanged()">annuleer nieuw toernooi</button>
         <EditForm Model="tournamentNewOrEdit" OnValidSubmit="AddNewTournament">
-            <DataAnnotationsValidator />
-                <div class="form-group">
-                    <label for="name">Naam :</label>
+        <DataAnnotationsValidator />
+            <div class="form-group">
+                <label for="name">Naam :</label>
                 <InputText id="name" class="form-control" @bind-Value="tournamentNewOrEdit.Name" />
                 <ValidationMessage For="@(()=>tournamentNewOrEdit.Name)" />
-                </div>
+            </div>
 
-                @if(tournamentNewOrEdit.Surfers.Count >= 2)
-                {
-                    <button class="btn btn-outline-primary">Sla toernooi op</button>
-                }
-            </EditForm>
+            <button disabled="@(!(tournamentNewOrEdit.Surfers.Count >= 2))" class="btn btn-outline-primary">Sla toernooi op</button>
+                
+        </EditForm>
             @if(tournamentNewOrEdit.Surfers.Count> 0)
             {
                 <WindSurferList WindSurfers="tournamentNewOrEdit.Surfers" ButtonText="deelt niet mee" TableTitle="windsurfers die deelnemen" UpdateSurfer="UpdateParticipant" />
