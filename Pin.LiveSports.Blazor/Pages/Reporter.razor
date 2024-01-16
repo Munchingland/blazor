@@ -47,7 +47,7 @@
 
 @if (isReporting)
 {
-    if(selectedPhase == null || selectedPhase == "")
+    if(selectedPhase == null|| selectedPhase == Constants.Start)
     {
         <label>Surfer aan de beurt :</label>
         <select onchange="@((ChangeEventArgs args)=>UpdateSelectedCompetitor(args.Value.ToString()))">
@@ -64,17 +64,34 @@
         {
             <div>
                 <label>Fase :</label>
-                <select @bind=selectedPhase>
-                    <option value="--selecteer een phase--">--selecteer een phase--</option>
-                    @foreach (var phase in phases)
-                    {
-                        <option value="@phase">@phase</option>
+                
+                    
+                    @if(!phases.Contains(Constants.Start)){
+                        <select @bind=selectedPhase>
+                        <option value="--selecteer een phase--">--selecteer een phase--</option>
+                        @foreach (var phase in phases)
+                        {
+                            <option value="@phase">@phase</option>
+                        }
+                        </select>
                     }
-                </select>
+                    @if (phases.Contains(Constants.Start))
+                    {
+                        <select onchange="@((ChangeEventArgs args)=> SelectToStart(args.Value.ToString()))">
+                        <option value="--selecteer een phase--">--selecteer een phase--</option>
+                        @foreach (var phase in phases)
+                        {
+                            <option value="@phase">@phase</option>
+                        }
+                        </select>
+                        
+                    }
+
+                
 
             </div>
 
-            @if (selectedPhase != null  || selectedPhase != "")
+            @if (selectedPhase != null  || selectedPhase != "" || selectedPhase != Constants.Start)
             {
                 @if (selectedPhase != Constants.Start && selectedPhase != Constants.SelectPhase)
                 {
@@ -98,7 +115,7 @@
 
     private List<WindSurfer> notParticipatingSurfers = new();
     private List<Tournament> tournaments;
-    private List<string> phases;
+    private List<string> phases = new();
     private string selectedPhase;
     private Competitor selectedCompetitor = new();
     private int selectedCompetitorId;
@@ -217,62 +234,68 @@
         var id = int.Parse(idString);
         selectedCompetitor = reportTournament.Competitors.FirstOrDefault(c => c.Id == id);
         LoadPhasesStillToDo();
-        if (phases.Contains(Constants.Start))
-        {
-            selectedPhase = Constants.Start;
-            SubmitTournamentUpdate();
-            LoadPhasesStillToDo();
-        }
+        selectedPhase = Constants.Start;
         StateHasChanged();
+    }
+    private void SelectToStart(string phase)
+    {
+        selectedPhase = phase.ToString();
+        SubmitTournamentUpdate();
     }
 
     private void LoadPhasesStillToDo()
     {
-        phases = new List<string>
-        {
-            Constants.Start
-        };
 
-        var toAdd = _tournamentService.GetPhasesInTournament();
-        foreach (var add in toAdd)
+        if(selectedCompetitor.PointsGained.Count != 0)
         {
-            phases.Add(add);
-        }
-        if(selectedCompetitor.PointsGained != null)
-        {
-            var phasesToRemove = new List<string>();
-            foreach (var phase in phases)
+            phases = new();
+            var toAdd = _tournamentService.GetPhasesInTournament();
+            foreach (var add in toAdd)
             {
-                if(selectedCompetitor.PointsGained.Select(c=>c.Phase).Contains(phase))
+                phases.Add(add);
+            }
+            if (selectedCompetitor.PointsGained != null)
+            {
+                var phasesToRemove = new List<string>();
+                foreach (var phase in phases)
                 {
-                    phasesToRemove.Add(phase);
+                    if (selectedCompetitor.PointsGained.Select(c => c.Phase).Contains(phase))
+                    {
+                        phasesToRemove.Add(phase);
+                    }
+                }
+                foreach (var phase in phasesToRemove)
+                {
+                    phases.Remove(phase);
+
+                }
+                if (phases.Count == 0)
+                {
+                    selectedCompetitor.FinishedRoutine = true;
+                    selectedCompetitor = null;
+                    selectedPhase = null;
+                    var competitor = reportTournament.Competitors.Where(c => c.FinishedRoutine == false).ToList();
+                    if (competitor.Count == 0)
+                    {
+                        reportTournament.HasCompleted = true;
+                        var winner = reportTournament.Competitors.OrderByDescending(c => c.TotalPointsGained).FirstOrDefault();
+                        winner.WonCompetition = true;
+                        isReporting = false;
+                        SendUpdate(reportTournament.Id);
+                    }
+                }
+                else
+                {
+                    selectedPhase = Constants.SelectPhase;
                 }
             }
-            foreach(var phase in phasesToRemove)
-            {
-                phases.Remove(phase);
-
-            }
-            if(phases.Count == 0)
-            {
-                selectedCompetitor.FinishedRoutine = true;
-                selectedCompetitor = null;
-                selectedPhase = null;
-                var competitor = reportTournament.Competitors.Where(c => c.FinishedRoutine == false).ToList();
-                if(competitor.Count == 0)
-                {
-                    reportTournament.HasCompleted = true;
-                    var winner = reportTournament.Competitors.OrderByDescending(c => c.TotalPointsGained).FirstOrDefault();
-                    winner.WonCompetition = true;
-                    isReporting = false;
-                    SendUpdate(reportTournament.Id);
-                }
-            }
-            else
-            {
-                selectedPhase = Constants.SelectPhase;
-            }
         }
+        else
+        {
+            phases.Clear();
+            phases.Add(Constants.Start);
+        }
+
         StateHasChanged();
     }
 
@@ -292,12 +315,6 @@
         matchUpdate = new();
         matchUpdate.PointGain = new();
         LoadPhasesStillToDo();
-        StateHasChanged();
-    }
-
-    private void HandleSelectChange(ChangeEventArgs e)
-    {
-        selectedPhase = e.Value.ToString();
         StateHasChanged();
     }
     #endregion
