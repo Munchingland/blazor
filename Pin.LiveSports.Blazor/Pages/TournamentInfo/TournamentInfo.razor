@@ -5,53 +5,7 @@
 @inject NavigationManager _navigationManager
 @inject IMatchService _matchService
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-
-            <th>deelnemers</th>
-            <th>Aantal fases gedaan</th>
-            <th>Totaal aantal punten</th>
-            <th>Afgerond totaal</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var surfer in ChosenTournament.Competitors)
-        {
-            <tr>
-                <td>@surfer.Surfer.Name</td>
-                @if (surfer.PointsGained.Count >= 2)
-                {
-                    <td>@(surfer.PointsGained.Count-1)</td>
-                }
-                @if (surfer.PointsGained.Count <= 2)
-                {
-                    <td></td>
-                }
-                
-                <td>@surfer.PointsGained.Sum(p=>p.TotalPoints)</td>
-
-                @if (surfer.PointsGained.Count >= 2)
-                {
-                    <td>@surfer.PointsGained.Sum(p=>p.AveragePoints)/@((surfer.PointsGained.Count-1) * 10)</td>
-                }
-                @if (surfer.PointsGained.Count <= 2)
-                {
-                    <td></td>
-                }
-                @if (surfer.WonCompetition)
-                {
-                    <td>Winnaar</td>
-                }
-                @if (!surfer.WonCompetition)
-                {
-                    <td></td>
-                }
-            </tr>
-        }
-    </tbody>
-</table>
+<TournamentCompetitorList ChosenTournament="ChosenTournament"/>
 
 <MatchHistoryItem TournamentHistory="matchHistory"/>
 
