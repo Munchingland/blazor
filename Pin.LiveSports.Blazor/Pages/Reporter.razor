@@ -44,6 +44,7 @@
         <WindSurferForm WindSurfer="@newSurfer" OnCancel="RefreshSurfers" OnSave="SaveSurfer" />
     }
 }
+
 @if (isReporting)
 {
     if(selectedPhase == null)
@@ -77,61 +78,7 @@
             {
                 @if (selectedPhase != Constants.Start && selectedPhase != "--selecteer een phase--")
                 {
-                    <EditForm Model="matchUpdate" OnValidSubmit="SubmitTournamentUpdate">
-                        <DataAnnotationsValidator />
-
-                        <div class="form-group">
-                            <label>Stijl en vloeibaarheid :</label>
-                            <select @bind=matchUpdate.PointGain.StyleAndFluidity>
-                                @foreach (var score in scoresToGive)
-                                {
-                                    <option value="@score">@score</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Verscheidenheid in trucs :</label>
-                            <select @bind=matchUpdate.PointGain.VarietyOfTricks>
-                                @foreach (var score in scoresToGive)
-                                {
-                                    <option value="@score">@score</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Moeilijkheid van mannuever :</label>
-                            <select @bind=matchUpdate.PointGain.DifficultyOfManuevers>
-                                @foreach (var score in scoresToGive)
-                                {
-                                    <option value="@score">@score</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Hoogte en lucht tijd :</label>
-                            <select @bind=matchUpdate.PointGain.HeightAndAirTime>
-                                @foreach (var score in scoresToGive)
-                                {
-                                    <option value="@score">@score</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>innovatie en creativiteit :</label>
-                            <select @bind=matchUpdate.PointGain.InnovationAndCreativity>
-                                @foreach (var score in scoresToGive)
-                                {
-                                    <option value="@score">@score</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="start">@selectedCompetitor.Surfer.Name routine Update:</label>
-                            <InputText id="start" class="form-control" @bind-Value="matchUpdate.UpdateMessage" />
-                            <ValidationMessage For="@(()=>matchUpdate.UpdateMessage)" />
-                        </div>
-                        <button class="btn btn-outline-primary">Stuur update door</button>
-                    </EditForm>
+                   <MatchReportUpdateModel ScoresToGive="scoresToGive" MatchUpdate="matchUpdate" SelectedCompetitor="selectedCompetitor" SubmitTournamentUpdate="SubmitTournamentUpdate"/>
                 }
             }
         }
