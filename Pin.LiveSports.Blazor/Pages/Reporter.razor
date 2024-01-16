@@ -47,7 +47,7 @@
 
 @if (isReporting)
 {
-    if(selectedPhase == null)
+    if(selectedPhase == null || selectedPhase == "")
     {
         <label>Surfer aan de beurt :</label>
         <select onchange="@((ChangeEventArgs args)=>UpdateSelectedCompetitor(args.Value.ToString()))">
@@ -64,7 +64,7 @@
         {
             <div>
                 <label>Fase :</label>
-                <select @onchange="HandleSelectChange">
+                <select @bind=selectedPhase>
                     <option value="--selecteer een phase--">--selecteer een phase--</option>
                     @foreach (var phase in phases)
                     {
@@ -76,7 +76,7 @@
 
             @if (selectedPhase != null  || selectedPhase != "")
             {
-                @if (selectedPhase != Constants.Start && selectedPhase != "--selecteer een phase--")
+                @if (selectedPhase != Constants.Start && selectedPhase != Constants.SelectPhase)
                 {
                    <MatchReportUpdateModel ScoresToGive="scoresToGive" MatchUpdate="matchUpdate" SelectedCompetitor="selectedCompetitor" SubmitTournamentUpdate="SubmitTournamentUpdate"/>
                 }
@@ -229,6 +229,7 @@
     {
         phases = new List<string>();
         phases.Add(Constants.Start);
+
         var toAdd = _tournamentService.GetPhasesInTournament();
         foreach (var add in toAdd)
         {
@@ -264,6 +265,10 @@
                     SendUpdate(reportTournament.Id);
                 }
             }
+            else
+            {
+                selectedPhase = Constants.SelectPhase;
+            }
         }
         StateHasChanged();
     }
@@ -283,9 +288,8 @@
         SendUpdate(reportTournament.Id);
         matchUpdate = new();
         matchUpdate.PointGain = new();
-        selectedPhase = "--selecteer een phase--";
         LoadPhasesStillToDo();
-        
+        StateHasChanged();
     }
 
     private void HandleSelectChange(ChangeEventArgs e)
