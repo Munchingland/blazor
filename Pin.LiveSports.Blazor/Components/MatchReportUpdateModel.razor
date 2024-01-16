@@ -1,0 +1,69 @@
+﻿<EditForm Model="MatchUpdate" OnValidSubmit="@(e=> SubmitTournamentUpdate.InvokeAsync(MatchUpdate))">
+    <DataAnnotationsValidator />
+
+    <div class="form-group">
+        <label>Stijl en vloeibaarheid :</label>
+        <select @bind=MatchUpdate.PointGain.StyleAndFluidity>
+            @foreach (var score in ScoresToGive)
+            {
+                <option value="@score">@score</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Verscheidenheid in trucs :</label>
+        <select @bind=MatchUpdate.PointGain.VarietyOfTricks>
+            @foreach (var score in ScoresToGive)
+            {
+                <option value="@score">@score</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Moeilijkheid van mannuever :</label>
+        <select @bind=MatchUpdate.PointGain.DifficultyOfManuevers>
+            @foreach (var score in ScoresToGive)
+            {
+                <option value="@score">@score</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Hoogte en lucht tijd :</label>
+        <select @bind=MatchUpdate.PointGain.HeightAndAirTime>
+            @foreach (var score in ScoresToGive)
+            {
+                <option value="@score">@score</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label>innovatie en creativiteit :</label>
+        <select @bind=MatchUpdate.PointGain.InnovationAndCreativity>
+            @foreach (var score in ScoresToGive)
+            {
+                <option value="@score">@score</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="start">@SelectedCompetitor.Surfer.Name routine Update:</label>
+        <InputText id="start" class="form-control" @bind-Value="MatchUpdate.UpdateMessage" />
+        <ValidationMessage For="@(()=>MatchUpdate.UpdateMessage)" />
+    </div>
+    <button class="btn btn-outline-primary">Stuur update door</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public MatchUpdate MatchUpdate { get; set; }
+
+    [Parameter]
+    public Competitor SelectedCompetitor { get; set; }
+
+    [Parameter]
+    public EventCallback<MatchUpdate> SubmitTournamentUpdate { get; set; }
+
+    [Parameter]
+    public List<int?> ScoresToGive { get; set; }
+}
