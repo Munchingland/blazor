@@ -234,9 +234,10 @@
         var id = int.Parse(idString);
         selectedCompetitor = reportTournament.Competitors.FirstOrDefault(c => c.Id == id);
         LoadPhasesStillToDo();
-        selectedPhase = Constants.Start;
+
         StateHasChanged();
     }
+
     private void SelectToStart(string phase)
     {
         selectedPhase = phase.ToString();
@@ -294,6 +295,7 @@
         {
             phases.Clear();
             phases.Add(Constants.Start);
+            selectedPhase = Constants.Start;
         }
 
         StateHasChanged();
