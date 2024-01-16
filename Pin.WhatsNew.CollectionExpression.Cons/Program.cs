@@ -9,9 +9,7 @@
 //ook heel interessant. het is iets dat als de mogelijkheid er is zal ik dit wel gebruiken
 
 //bv in deze opdracht bij reporter deed ik het origineel zo
-
-
-
+Console.WriteLine("Oude manier :");
 var oldPhases = new List<string>
 {
     Constants.Start
@@ -22,8 +20,13 @@ foreach (var add in oldToAdd)
 {
     oldPhases.Add(add);
 }
-
+foreach (string phase in oldPhases)
+{
+    Console.WriteLine(phase);
+}
+Console.WriteLine("--------------------------------------------------------------------------------------------");
 //terwijl op de nieuwe manier kan het zo
+Console.WriteLine("Nieuwe manier :");
 List<string> phases = [Constants.Start];
 var newToAdd = GetPhasesInTournament();
 
@@ -34,11 +37,17 @@ foreach (string phase in phases)
     Console.WriteLine(phase);
 }
 Console.WriteLine("--------------------------------------------------------------------------------------------");
-
-var getPhases = GetPhasesInTournament();
-
-
+//of nog korter
+Console.WriteLine("nieuwe kortere manier :");
+var shortToAdd = GetPhasesInTournament();
+phases = [Constants.Start, .. shortToAdd];
+foreach (string phase in phases)
+{
+    Console.WriteLine(phase);
+}
+Console.WriteLine("--------------------------------------------------------------------------------------------");
 //ook de return van methodes kan je hier gebruiken zonder probleem. Niet aangeraden maar wel mogelijk
+Console.WriteLine("functie in expressie:");
 IEnumerable<string> phasesNumerable = oldPhases;
 
 string[] phasesArray = [..GetPhasesInTournament(), "Hi", ..phasesNumerable  ];
